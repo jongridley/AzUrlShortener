@@ -47,8 +47,7 @@ namespace Cloud5mins.Function
         public static async Task<IActionResult> Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest req,
         ILogger log,
-        ExecutionContext context,
-        ClaimsPrincipal principal)
+        ExecutionContext context)
         {
             log.LogInformation($"C# HTTP trigger function processed this request: {req}");
 
@@ -57,16 +56,6 @@ namespace Cloud5mins.Function
             ShortUrlEntity result;
             try
             {
-                var invalidRequest = Utility.CatchUnauthorize(principal, log);
-                if (invalidRequest != null)
-                {
-                    return invalidRequest;
-                }
-                else
-                {
-                    userId = principal.FindFirst(ClaimTypes.GivenName).Value;
-                    log.LogInformation("Authenticated user {user}.", userId);
-                }
 
                 // Validation of the inputs
                 if (req == null)
