@@ -29,7 +29,7 @@
         },
         "GitHubURL": {
             "type": "string",
-            "defaultValue": "https://github.com/fboucher/AzUrlShortener.git",
+            "defaultValue": "https://github.com/jongridley/AzUrlShortener.git",
             "metadata": {
                 "description": "The URL of GitHub (ending by .git)"
             }
@@ -80,7 +80,7 @@
         "UrlsStorageAccountName": "[concat('urldata', variables('suffix'), 'stg')]",
         "frontendInfo": {
             "adminBlazorWebsite": { 
-                "armTemplateUrl": "[concat('https://raw.githubusercontent.com/FBoucher/AzUrlShortener/', parameters('GitHubBranch'), '/src/adminTools/adminBlazorWebsite/deployment/adminBlazorWebsite-deployAzure.json')]"
+                "armTemplateUrl": "[concat('https://raw.githubusercontent.com/jongridley/AzUrlShortener/', parameters('GitHubBranch'), '/src/adminTools/adminBlazorWebsite/deployment/adminBlazorWebsite-deployAzure.json')]"
             }
         }
             
