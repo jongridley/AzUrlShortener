@@ -26,6 +26,7 @@ namespace Cloud5mins.domain
         public int Clicks { get; set; }
 
         public bool? IsArchived { get; set; }
+
         public string SchedulesPropertyRaw { get; set; }
 
         [IgnoreProperty]
@@ -40,6 +41,23 @@ namespace Cloud5mins.domain
             } 
         }
 
+        public string MetadataPropertyRaw { get; set; }
+
+        [IgnoreProperty]
+        public ShipmentMetadata ShipmentMetadata
+        {
+            get
+            {
+                if (String.IsNullOrEmpty(MetadataPropertyRaw))
+                    return null;
+                return JsonConvert.DeserializeObject<ShipmentMetadata>(MetadataPropertyRaw);
+            }
+            set
+            {
+                MetadataPropertyRaw = JsonConvert.SerializeObject(value);
+            }
+        }
+
         public ShortUrlEntity(){}
 
         public ShortUrlEntity(string longUrl, string endUrl)
@@ -52,12 +70,12 @@ namespace Cloud5mins.domain
             Initialize(longUrl, endUrl, string.Empty, schedules);
         }
 
-        public ShortUrlEntity(string longUrl, string endUrl, string title, Schedule[] schedules)
+        public ShortUrlEntity(string longUrl, string endUrl, string title, Schedule[] schedules, ShipmentMetadata metadata = null)
         {
-            Initialize(longUrl, endUrl, title, schedules);
+            Initialize(longUrl, endUrl, title, schedules, metadata);
         }
 
-        private void Initialize(string longUrl, string endUrl, string title, Schedule[] schedules)
+        private void Initialize(string longUrl, string endUrl, string title, Schedule[] schedules, ShipmentMetadata metadata = null)
         {
             PartitionKey = endUrl.First().ToString();
             RowKey = endUrl;
@@ -66,6 +84,7 @@ namespace Cloud5mins.domain
             Clicks = 0;
             IsArchived = false;
             Schedules = schedules;
+            ShipmentMetadata = metadata;
         }
 
         public static ShortUrlEntity GetEntity(string longUrl, string endUrl, string title, Schedule[] schedules){

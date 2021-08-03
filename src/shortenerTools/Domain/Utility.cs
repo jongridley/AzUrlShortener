@@ -45,6 +45,17 @@ namespace Cloud5mins.domain
             return host + "/" + vanity;
         }
 
+        public static string GetShortUrl(ShipmentMetadata queryItem, StorageTableHelper storageTable)
+        {
+            if(queryItem != null)
+            {
+                var result = storageTable.GetShortUrlEntity(queryItem);
+                return result != null ? result.ShortUrl : "No short link could be found with the information provided";
+            }
+
+            return "Query could not be executed with the information provided";
+        }
+
         // generates a unique, random, and alphanumeric token for the use as a url 
         //(not entirely secure but not sequential so generally not guessable)
         public static string GenerateUniqueRandomToken(int uniqueId)

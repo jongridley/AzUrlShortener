@@ -103,7 +103,7 @@ namespace Cloud5mins.Function
 
                 if (!string.IsNullOrEmpty(vanity))
                 {
-                    newRow = new ShortUrlEntity(longUrl, vanity, title, input.Schedules);
+                    newRow = new ShortUrlEntity(longUrl, vanity, title, input.Schedules, input.Metadata);
                     if (await stgHelper.IfShortUrlEntityExist(newRow))
                     {
                         return new ConflictObjectResult(new{ Message = "This Short URL already exist."});
@@ -111,7 +111,7 @@ namespace Cloud5mins.Function
                 }
                 else
                 {
-                    newRow = new ShortUrlEntity(longUrl, await Utility.GetValidEndUrl(vanity, stgHelper), title, input.Schedules);
+                    newRow = new ShortUrlEntity(longUrl, await Utility.GetValidEndUrl(vanity, stgHelper), title, input.Schedules, input.Metadata);
                 }
 
                 await stgHelper.SaveShortUrlEntity(newRow);

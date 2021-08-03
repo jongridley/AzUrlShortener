@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos.Table;
+using Newtonsoft.Json;
 
 namespace Cloud5mins.domain
 {
@@ -47,6 +49,39 @@ namespace Cloud5mins.domain
              TableResult result = await GetUrlsTable().ExecuteAsync(selOperation);
              ShortUrlEntity eShortUrl = result.Result as ShortUrlEntity;
              return eShortUrl;
+        }
+
+        public ShortUrlEntity GetShortUrlEntity(ShipmentMetadata queryItem)
+        {
+            var query = TableQuery.GenerateFilterCondition("MetadataPropertyRaw", QueryComparisons.Equal, JsonConvert.SerializeObject(queryItem));
+            var exQuery = new TableQuery<ShortUrlEntity>().Where(query);
+            var sourceTable = GetUrlsTable();
+            var result = sourceTable.ExecuteQuery(exQuery).FirstOrDefault();
+            return result;
+        }
+
+        public async Task<bool> DeleteExpired(int days)
+        {
+            var query = TableQuery.GenerateFilterConditionForDate("Timestamp", QueryComparisons.GreaterThanOrEqual, DateTimeOffset.Now.AddDays(days).Date);
+            var exQuery = new TableQuery<ShortUrlEntity>().Where(query);
+            var sourceTable = GetUrlsTable();
+            var results = sourceTable.ExecuteQuery(exQuery).ToList();
+
+            try
+            {
+                TableOperation deleteOperation;
+                foreach(ShortUrlEntity entity in results)
+                {
+                    deleteOperation = TableOperation.Delete(entity);
+                    await sourceTable.ExecuteAsync(deleteOperation);
+                }
+            }
+            catch(Exception ex)
+            {
+                throw;
+            }
+
+            return true;
         }
 
         public async Task<List<ShortUrlEntity>> GetAllShortUrlEntities()
